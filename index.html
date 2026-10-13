@@ -127,7 +127,7 @@
       <input id="in-file" type="file" multiple accept=".html,.htm,.gpx,text/html,application/gpx+xml,text/xml,application/xml">
       <p class="muted small">En Wikiloc, abre la ruta y guarda la página con <b>Ctrl+S → «Página web completa»</b>. De ella se extraen el track, la altitud, los puntos de interés, las estadísticas y la descripción.</p>
 
-      <details class="alt">
+      <details class="alt" id="alt-bm">
         <summary>Más rápido: marcador del navegador</summary>
         <p class="small">Arrastra este enlace a tu barra de marcadores. Estando en la página de una ruta de Wikiloc, púlsalo y la ruta se importará aquí directamente.</p>
         <p><a id="bookmarklet" class="btn" href="#" draggable="true">Importar en Wikiloc Tracks</a></p>
@@ -135,10 +135,10 @@
       </details>
 
       <details class="alt">
-        <summary>Con la URL de la ruta (requiere proxy)</summary>
+        <summary>Con la URL de la ruta</summary>
         <label for="in-url">URL de la ruta en Wikiloc</label>
         <input id="in-url" type="url" placeholder="https://www.wikiloc.com/…-12345678" autocomplete="off">
-        <p class="muted small">Necesita el proxy de <code>worker/</code> (ver Ajustes). Wikiloc puede bloquearlo; en ese caso usa el archivo guardado.</p>
+        <p class="muted small">Abre la ruta en Wikiloc para que la importes con el marcador. Si configuras un proxy propio (Ajustes), se importa directamente sin salir de aquí.</p>
       </details>
 
       <p id="add-status" class="status" role="status"></p>

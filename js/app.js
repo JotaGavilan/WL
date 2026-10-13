@@ -597,6 +597,13 @@ async function doImport(ev) {
     let res;
     if (files.length) {
       res = await importFiles(files, { sourceUrl: url || undefined });
+    } else if (!getSettings().proxyUrl) {
+      // Sin proxy no se puede leer Wikiloc desde aquí: abrir la ruta y guiar con el marcador
+      if (!isWikilocUrl(url)) { setStatus('La URL no parece una ruta de Wikiloc (debe terminar en un número de ruta).', true); return; }
+      window.open(url, '_blank', 'noopener');
+      $('alt-bm').open = true;
+      setStatus('He abierto la ruta en otra pestaña. Wikiloc no permite leerla desde aquí: en esa pestaña pulsa el marcador «Importar en Wikiloc Tracks» (arrástralo a tu barra de marcadores desde aquí abajo, solo la primera vez). Alternativa: Ctrl+S → «Página web completa» y súbela arriba.');
+      return;
     } else {
       setStatus('Consultando Wikiloc…');
       const u = await importFromUrl(url);

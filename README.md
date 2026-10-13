@@ -30,7 +30,7 @@ Wikiloc no ofrece API pública y su descarga de GPX exige iniciar sesión, así 
 
 1. **Página guardada (la más fiable).** En Wikiloc abre la ruta, espera a que cargue el mapa y guarda con **Ctrl+S → «Página web completa»**. En la app: *Añadir ruta* → elige uno o varios `.html`. También acepta `.gpx`.
 2. **Marcador del navegador.** En *Añadir ruta* arrastra el botón a la barra de marcadores. Estando en una ruta de Wikiloc, púlsalo: la ruta se envía a la app y se guarda. Algunos navegadores o sitios bloquean marcadores; si pasa, usa la opción 1.
-3. **Pegar la URL (opcional, experimental).** Necesita un proxy propio (`worker/`, abajo) y Wikiloc puede bloquearlo.
+3. **Pegar la URL.** Sin proxy, la app abre la ruta en otra pestaña y te guía para usar el marcador (Wikiloc no deja leer su página desde otra web). Con un proxy propio opcional (`worker/`, abajo) se importa directamente, aunque Wikiloc puede bloquearlo.
 
 Volver a importar la misma ruta **la actualiza**, no la duplica.
 

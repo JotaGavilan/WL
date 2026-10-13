@@ -2,7 +2,7 @@
 //  - La app (HTML/JS/CSS/Leaflet/iconos) se precachea al instalar.
 //  - Las rutas viven en IndexedDB (no dependen del SW).
 //  - Teselas de mapa: se sirven de la caché (teselas guardadas a propósito o vistas antes) y, si no están, de la red.
-const VERSION = 'v5';
+const VERSION = 'v6';
 const APP_CACHE = `wt-app-${VERSION}`;
 const TILE_CACHE = 'wt-tiles';          // últimas teselas vistas (se recorta)
 const OFFLINE_CACHE = 'wt-offline-tiles'; // teselas guardadas por el usuario (no se recorta)
