@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Wikiloc Tracks</title>
+  <meta name="description" content="Guarda rutas de Wikiloc y velas en el mapa, sin conexión, con su perfil y datos de distancia.">
+  <meta name="theme-color" content="#1f6f4a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="vendor/leaflet.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="app">
+    <header id="topbar">
+      <a id="home" class="brand" href="#">Wikiloc Tracks</a>
+      <nav id="route-nav" hidden aria-label="Ruta abierta">
+        <a id="btn-back" class="btn" href="#">← Rutas</a>
+        <label class="sr-only" for="route-jump">Cambiar de ruta</label>
+        <select id="route-jump"></select>
+      </nav>
+      <span class="spacer"></span>
+      <button id="btn-add" class="primary" type="button">+ Añadir<span class="long">&nbsp;ruta</span></button>
+      <button id="btn-settings" type="button" aria-label="Ajustes" title="Ajustes">⚙</button>
+    </header>
+
+    <main id="main">
+      <!-- Pantalla «Mis rutas» -->
+      <section id="gallery" aria-label="Mis rutas">
+        <div class="g-bar">
+          <h1>Mis rutas <span id="count" class="muted small"></span></h1>
+          <div class="g-tools">
+            <input id="search" type="search" placeholder="Buscar ruta…" aria-label="Buscar ruta">
+            <label class="sr-only" for="sort">Ordenar por</label>
+            <select id="sort">
+              <option value="recent">Más recientes</option>
+              <option value="name">Nombre</option>
+              <option value="distance">Distancia</option>
+              <option value="ascent">Desnivel</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="import-report" hidden role="status">
+          <div id="report-text"></div>
+          <button id="report-close" type="button" aria-label="Cerrar aviso">×</button>
+        </div>
+
+        <ul id="route-list"></ul>
+
+        <div id="empty" hidden>
+          <h2>Aún no tienes rutas guardadas</h2>
+          <p>Guarda la página de una ruta de Wikiloc (<b>Ctrl+S → «Página web completa»</b>) y súbela aquí. Puedes elegir <b>varias a la vez</b> o <b>arrastrarlas</b> a esta pantalla. También vale un archivo GPX.</p>
+          <p><button id="empty-add" class="primary" type="button">+ Añadir rutas</button></p>
+        </div>
+
+        <footer class="g-foot">
+          <p id="storage-note" class="muted small"></p>
+          <div class="row">
+            <button id="btn-backup" type="button">Copia de seguridad</button>
+            <button id="btn-restore" type="button">Restaurar</button>
+            <input id="file-restore" type="file" accept="application/json,.json" hidden>
+            <button id="btn-install" type="button" hidden>Instalar app</button>
+          </div>
+        </footer>
+      </section>
+
+      <!-- Vista de una ruta: mapa + datos -->
+      <section id="routeview" hidden>
+        <div id="map" role="application" aria-label="Mapa"></div>
+        <section id="detail" hidden>
+          <div class="detail-head">
+            <div>
+              <h2 id="d-name"></h2>
+              <p id="d-sub" class="muted small"></p>
+            </div>
+            <div class="detail-actions">
+              <a id="d-gmaps" class="btn" target="_blank" rel="noopener">Google Maps</a>
+              <a id="d-src" class="btn" target="_blank" rel="noopener">Wikiloc</a>
+              <button id="d-gpx" type="button">GPX</button>
+              <button id="d-kml" type="button">KML</button>
+              <button id="d-rename" type="button">Renombrar</button>
+              <button id="d-del" type="button" class="danger">Borrar</button>
+            </div>
+          </div>
+
+          <h3 class="sec first">Perfil de elevación</h3>
+          <canvas id="profile" aria-label="Perfil de elevación"></canvas>
+          <p class="muted small hint">Pasa el dedo o el ratón por el perfil o por la ruta del mapa: la posición se marca en ambos a la vez.</p>
+
+          <h3 class="sec">Estadísticas de la ruta</h3>
+          <dl id="stats"></dl>
+
+          <div id="poi-wrap" hidden>
+            <h3 class="sec">Puntos de interés</h3>
+            <ol id="poi-list"></ol>
+          </div>
+
+          <div id="desc-wrap" hidden>
+            <h3 class="sec">Descripción del itinerario</h3>
+            <div id="d-desc" class="desc"></div>
+          </div>
+
+          <h3 class="sec">Uso sin conexión</h3>
+          <div id="offline-box">
+            <p id="off-state" class="small"></p>
+            <div class="row">
+              <button id="off-save" type="button">Guardar mapa de la zona</button>
+              <button id="off-del" type="button" hidden>Quitar mapa guardado</button>
+            </div>
+            <p id="off-status" class="muted small" role="status"></p>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div id="dropzone" hidden aria-hidden="true"><div>Suelta aquí las rutas<br><span>Páginas de Wikiloc (.html) o archivos GPX</span></div></div>
+
+  <dialog id="dlg-add">
+    <form method="dialog" id="form-add">
+      <h2>Añadir ruta</h2>
+
+      <label for="in-file">Páginas de ruta guardadas (.html) o archivos GPX — puedes elegir varios</label>
+      <input id="in-file" type="file" multiple accept=".html,.htm,.gpx,text/html,application/gpx+xml,text/xml,application/xml">
+      <p class="muted small">En Wikiloc, abre la ruta y guarda la página con <b>Ctrl+S → «Página web completa»</b>. De ella se extraen el track, la altitud, los puntos de interés, las estadísticas y la descripción.</p>
+
+      <details class="alt">
+        <summary>Más rápido: marcador del navegador</summary>
+        <p class="small">Arrastra este enlace a tu barra de marcadores. Estando en la página de una ruta de Wikiloc, púlsalo y la ruta se importará aquí directamente.</p>
+        <p><a id="bookmarklet" class="btn" href="#" draggable="true">Importar en Wikiloc Tracks</a></p>
+        <p class="muted small">Si tu navegador bloquea marcadores en Wikiloc, usa el archivo guardado.</p>
+      </details>
+
+      <details class="alt">
+        <summary>Con la URL de la ruta (requiere proxy)</summary>
+        <label for="in-url">URL de la ruta en Wikiloc</label>
+        <input id="in-url" type="url" placeholder="https://www.wikiloc.com/…-12345678" autocomplete="off">
+        <p class="muted small">Necesita el proxy de <code>worker/</code> (ver Ajustes). Wikiloc puede bloquearlo; en ese caso usa el archivo guardado.</p>
+      </details>
+
+      <p id="add-status" class="status" role="status"></p>
+      <menu>
+        <button value="cancel" type="button" id="add-cancel">Cancelar</button>
+        <button id="add-go" class="primary" type="submit">Importar</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-settings">
+    <form method="dialog" id="form-settings">
+      <h2>Ajustes</h2>
+      <label for="in-proxy">URL del proxy de Wikiloc (opcional)</label>
+      <input id="in-proxy" type="url" placeholder="https://wikiloc-proxy.tu-usuario.workers.dev" autocomplete="off">
+      <p class="muted small">Solo para importar pegando una URL. Despliega <code>worker/</code> en Cloudflare (ver README).</p>
+      <menu>
+        <button type="button" id="set-cancel">Cancelar</button>
+        <button class="primary" type="submit">Guardar</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="config.js"></script>
+  <script src="vendor/leaflet.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

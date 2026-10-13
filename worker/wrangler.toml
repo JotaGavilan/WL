@@ -1,0 +1,10 @@
+name = "wikiloc-proxy"
+main = "index.js"
+compatibility_date = "2026-01-01"
+
+# Opcional: restringe quién puede usar tu proxy a tu página de GitHub Pages.
+# [vars]
+# ALLOWED_ORIGIN = "https://TU_USUARIO.github.io"
+
+# La cookie de sesión de Wikiloc (opcional) se guarda como secreto, nunca aquí:
+#   npx wrangler secret put WIKILOC_COOKIE
